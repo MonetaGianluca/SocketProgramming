@@ -25,24 +25,30 @@ public class ServerCalcolatrice{
 		try (ServerSocket serverSocket = new ServerSocket(PORTA)) {
 			System.out.println("Server avviato sulla porta " + PORTA);
 			
-		}
-		
-		while (true) {
-			Socket client = serverSocket.accept();
-			// Gestisci comunicazione con client
-			
-			String[] parti = richiesta.trim().split("\\s+");
-			if (parti.length != 3) {
-				return "ERRORE: Formato non valido";
-			}
+			BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));	// per leggere i messaggi del client
+			PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);	// serve a inviare al client le risposte
 
-			double num1 = Double.parseDouble(parti[0]);
-			String operazione = parti[1];
-			double num2 = Double.parseDouble(parti[2]);
-			if (!Double.isFinite(num1) || !Double.isFinite(num2)) {
-				return "ERRORE: Sono ammessi soltanto numeri finiti";
+			while (true) {
+				Socket client = serverSocket.accept();
+				String richiesta = in.readLine();
+				
+				String[] parti = richiesta.trim().split("\\s+");
+				if (parti.length != 3) {
+					out.println("ERRORE: Formato non valido");
+					break;
+				}
+				
+				double num1 = Double.parseDouble(parti[0]);
+				String operazione = parti[1];
+				double num2 = Double.parseDouble(parti[2]);
+				if (!Double.isFinite(num1) || !Double.isFinite(num2)) {
+					out.println("ERRORE: Sono ammessi soltanto numeri finiti");
+					break;
+				}
+				out.println(calcola(num1, operazione, num2));
 			}
+		}catch(IOException e){
+			System.out.println(e);
 		}
-		
 	}
 }
