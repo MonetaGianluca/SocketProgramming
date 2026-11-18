@@ -35,7 +35,7 @@ public class ServerCalcolatrice{
 				String[] parti = richiesta.trim().split("\\s+");
 				if (parti.length != 3) {
 					out.println("ERRORE: Formato non valido");
-					break;
+					continue;
 				}
 				
 				double num1 = Double.parseDouble(parti[0]);
@@ -43,9 +43,10 @@ public class ServerCalcolatrice{
 				double num2 = Double.parseDouble(parti[2]);
 				if (!Double.isFinite(num1) || !Double.isFinite(num2)) {
 					out.println("ERRORE: Sono ammessi soltanto numeri finiti");
-					break;
+					continue;
 				}
 				out.println(calcola(num1, operazione, num2));
+				client.close();
 			}
 		}catch(IOException e){
 			System.out.println(e);
