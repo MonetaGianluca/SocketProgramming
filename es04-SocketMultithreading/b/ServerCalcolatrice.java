@@ -24,29 +24,37 @@ public class ServerCalcolatrice{
 		
 		try (ServerSocket serverSocket = new ServerSocket(PORTA)) {
 			System.out.println("Server avviato sulla porta " + PORTA);
-			
-			BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));	// per leggere i messaggi del client
-			PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);	// serve a inviare al client le risposte
+
 
 			while (true) {
-				Socket client = serverSocket.accept();
-				String richiesta = in.readLine();
-				
-				String[] parti = richiesta.trim().split("\\s+");
-				if (parti.length != 3) {
-					out.println("ERRORE: Formato non valido");
-					continue;
+
+				try(Socket client = serverSocket.accept();){	// try with resources
+					
+					BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));	// per leggere i messaggi del client
+					PrintWriter out = new PrintWriter(client.getOutputStream(), true);	// serve a inviare al client le risposte
+					
+					try{
+						String richiesta = in.readLine();				
+						String[] parti = richiesta.trim().split("\\s+");
+						if (parti.length != 3) {
+							out.println("ERRORE: Formato non valido");
+							continue;
+						}
+						
+						double num1 = Double.parseDouble(parti[0]);
+						String operazione = parti[1];
+						double num2 = Double.parseDouble(parti[2]);
+						if (!Double.isFinite(num1) || !Double.isFinite(num2)) {
+							out.println("ERRORE: Sono ammessi soltanto numeri finiti");
+							continue;
+						}
+						out.println(calcola(num1, operazione, num2));
+					}catch(Exception e){
+						out.println("ERRORE: "+ e);
+					}
+				}catch(IOException e){
+					System.out.println(e);
 				}
-				
-				double num1 = Double.parseDouble(parti[0]);
-				String operazione = parti[1];
-				double num2 = Double.parseDouble(parti[2]);
-				if (!Double.isFinite(num1) || !Double.isFinite(num2)) {
-					out.println("ERRORE: Sono ammessi soltanto numeri finiti");
-					continue;
-				}
-				out.println(calcola(num1, operazione, num2));
-				client.close();
 			}
 		}catch(IOException e){
 			System.out.println(e);
