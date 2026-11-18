@@ -8,8 +8,8 @@ public class ClientCalcolatrice{
 
 	public static void main(String[] args) {
 		try (Socket socket = new Socket(HOST, PORTA);
-			PrintWriter out = new PrintWriter(socket.getOutputStream(), true, java.nio.charset.StandardCharsets.UTF_8);
-			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), java.nio.charset.StandardCharsets.UTF_8));
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			Scanner scanner = new Scanner(System.in)){
 
 			System.out.println("=== CALCOLATRICE REMOTA ===");

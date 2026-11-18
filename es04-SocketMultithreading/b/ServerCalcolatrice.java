@@ -29,13 +29,17 @@ public class ServerCalcolatrice{
 				
 				try(Socket client = serverSocket.accept();){	// try with resources
 					
+					System.out.println("client connesso");
+
 					BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));	// per leggere i messaggi del client
 					PrintWriter out = new PrintWriter(client.getOutputStream(), true);	// serve a inviare al client le risposte
 									
 					while(true){	// per accettare più richieste da un client
 						
 						try{
+							System.out.println("in attesa di una richiesta dal client");
 							String richiesta = in.readLine();
+							System.out.println("richiesta ricevuta: "+richiesta);
 							if(richiesta == null){
 								break;
 							}
@@ -58,6 +62,7 @@ public class ServerCalcolatrice{
 								continue;
 							}
 							out.println(calcola(num1, operazione, num2));
+							System.out.println("risposta inviata");
 						}catch(Exception e){
 							out.println("ERRORE: "+ e);
 						}
